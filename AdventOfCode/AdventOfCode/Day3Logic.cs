@@ -21,51 +21,25 @@ namespace AdventOfCode
 
         static void AnalyzeDay3B(List<string> lines)
         {
-            List<string> oxygenGeneratorRatingLines = lines;
+            bool isForOxygenRating = true;
+            int oxygenGeneratorRating = GetRating(lines, isForOxygenRating);
+            bool isForCO2ScurbberRating = false;
+            int co2ScrubberRating = GetRating(lines, isForCO2ScurbberRating);
+            int result = oxygenGeneratorRating * co2ScrubberRating;
+            Console.WriteLine(result);
+        }
+
+        static int GetRating(List<string> lines, bool isForOxygenRating)
+        {
             int bitIndex = 0;
-            while (oxygenGeneratorRatingLines.Count > 1)
-            { 
-                int oneCounter = 0;
-                int zeroCounter = 0;
-
-                for (int i = 0; i < oxygenGeneratorRatingLines.Count; ++i)
-                {
-                    var line = oxygenGeneratorRatingLines[i];
-                    if (line[bitIndex] == '1')
-                    {
-                        oneCounter++;
-                    }
-                    else
-                    {
-                        zeroCounter++;
-                    }
-                }
-
-                char mostCommonValue = (oneCounter >= zeroCounter) ? '1' : '0';
-                var updatedList = new List<string>();
-                for (int i = 0; i < oxygenGeneratorRatingLines.Count; ++i)
-                {
-                    var line = oxygenGeneratorRatingLines[i];
-                    if (line[bitIndex] == mostCommonValue)
-                    {
-                        updatedList.Add(line);
-                    }
-                }
-                oxygenGeneratorRatingLines = updatedList;
-                bitIndex++;
-            }
-            //Console.WriteLine($"oxygen generator rating: {oxygenGeneratorRatingLines[0]}");
-
-            bitIndex = 0;
-            List<string> CO2ScrubberRatingLines = lines;
-            while (CO2ScrubberRatingLines.Count > 1)
+            while (lines.Count > 1)
             {
                 int oneCounter = 0;
                 int zeroCounter = 0;
 
-                for (int i = 0; i < CO2ScrubberRatingLines.Count; ++i)
+                for (int i = 0; i < lines.Count; ++i)
                 {
-                    var line = CO2ScrubberRatingLines[i];
+                    var line = lines[i];
                     if (line[bitIndex] == '1')
                     {
                         oneCounter++;
@@ -76,25 +50,31 @@ namespace AdventOfCode
                     }
                 }
 
-                char mostCommonValue = (oneCounter < zeroCounter) ? '1' : '0';
-                var updatedList = new List<string>();
-                for (int i = 0; i < CO2ScrubberRatingLines.Count; ++i)
+                char commonValue;
+                if (isForOxygenRating)
                 {
-                    var line = CO2ScrubberRatingLines[i];
-                    if (line[bitIndex] == mostCommonValue)
+                    commonValue = (oneCounter >= zeroCounter) ? '1' : '0';
+                }
+                else
+                {
+                    commonValue = (oneCounter < zeroCounter) ? '1' : '0';
+                }
+
+                var updatedList = new List<string>();
+                for (int i = 0; i < lines.Count; ++i)
+                {
+                    var line = lines[i];
+                    if (line[bitIndex] == commonValue)
                     {
                         updatedList.Add(line);
                     }
                 }
-                CO2ScrubberRatingLines = updatedList;
+                lines = updatedList;
                 bitIndex++;
             }
-            //Console.WriteLine($"CO2 scrubber rating: {CO2ScrubberRatingLines[0]}");
-            
-            int oxygenGeneratorRating = Convert.ToInt32(oxygenGeneratorRatingLines[0], 2);
-            int co2ScrubberRating = Convert.ToInt32(CO2ScrubberRatingLines[0], 2);
-            int result = oxygenGeneratorRating * co2ScrubberRating;
-            Console.WriteLine(result);
+
+            int result = Convert.ToInt32(lines[0], 2);
+            return result;
         }
 
         static void AnalyzeDay3A(List<string> lines)

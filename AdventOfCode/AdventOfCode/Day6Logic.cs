@@ -12,51 +12,6 @@
             Console.WriteLine("End of day 6");
         }
 
-        // Old approach. Too slow to solve part B.
-        static void AnalyzeDay6A(string fileName, int numberOfDays)
-        {
-            List<string> lanternfishSchool = Utility.GetLines(fileName);
-            string[] priorDaySequence = new string[7];
-            priorDaySequence[0] = lanternfishSchool[0];
-
-            for (int day = 0; day < numberOfDays; ++day)
-            {
-                string[] fishes = lanternfishSchool[day].Split(',');
-                string nextDayFish = string.Empty;
-                string appendNewFish = string.Empty;
-
-                for (int index = 0; index < fishes.Length; ++index)
-                {
-                    string fish = fishes[index];
-                    int number = Convert.ToInt32(fish);
-                    number--;
-
-                    if (number < 0)
-                    {
-                        number = 6;
-                        appendNewFish += ",8";
-                    }
-
-                    if (index < fishes.Length - 1)
-                    {
-                        nextDayFish += $"{number},";
-                    }
-                    else
-                    {
-                        nextDayFish += $"{number}";
-                    }
-                }
-
-                nextDayFish += appendNewFish;
-                lanternfishSchool.Add(nextDayFish);
-                //Console.WriteLine(nextDayFish);
-            }
-
-            string fishOnLastDay = lanternfishSchool[numberOfDays];
-            string[] fishAmounts = fishOnLastDay.Split(',');
-            Console.WriteLine(fishAmounts.Length);
-        }
-
         static void AnalyzeDay6AB(string fileName, int numberOfDays)
         {
             List<string> lanternfishSchool = Utility.GetLines(fileName);

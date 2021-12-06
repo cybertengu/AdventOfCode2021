@@ -15,30 +15,37 @@
         static void AnalyzeDay6AB(string fileName, int numberOfDays)
         {
             List<string> lanternfishSchool = Utility.GetLines(fileName);
-
-            long[] dayCounter = new long[9] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+            long[] dayFishCounter = new long[9] { 0, 0, 0, 0, 0, 0, 0, 0, 0 };
             foreach (var fish in lanternfishSchool[0].Split(','))
             {
                 long dayLeft = Convert.ToInt32(fish);
-                dayCounter[dayLeft]++;
+                dayFishCounter[dayLeft]++;
             }
-            
+
             for (int i = 0; i < numberOfDays; ++i)
             {
-                long newBabiesAmount = dayCounter[0];
-                dayCounter[0] = dayCounter[1];
-                dayCounter[1] = dayCounter[2];
-                dayCounter[2] = dayCounter[3];
-                dayCounter[3] = dayCounter[4];
-                dayCounter[4] = dayCounter[5];
-                dayCounter[5] = dayCounter[6];
-                dayCounter[6] = dayCounter[7] + newBabiesAmount;
-                dayCounter[7] = dayCounter[8];
-                dayCounter[8] = newBabiesAmount;
+                long newBabiesAmount = dayFishCounter[0];
+                for (int j = 0; j < dayFishCounter.Length; ++j)
+                {
+                    bool isIndexDay6 = (j == 6);
+                    bool isIndexDay8 = (j == 8);
+                    if (!isIndexDay6 && !isIndexDay8)
+                    {
+                        dayFishCounter[j] = dayFishCounter[j + 1];
+                    }
+                    else if (isIndexDay6)
+                    {
+                        dayFishCounter[j] = dayFishCounter[j + 1] + newBabiesAmount;
+                    }
+                    else if (isIndexDay8)
+                    {
+                        dayFishCounter[j] = newBabiesAmount;
+                    }
+                }
             }
 
             long sum = 0;
-            foreach (var fish in dayCounter)
+            foreach (var fish in dayFishCounter)
             {
                 sum += fish;
             }

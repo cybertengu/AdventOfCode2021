@@ -7,6 +7,8 @@ using AdventOfCode;
 //Day3Logic.AnalyzeDay3(@"TestFiles\day3.txt");
 //Day4Logic.AnalyzeDay4(@"TestFiles\day4.txt");
 //Day5Logic.AnalyzeDay5(@"TestFiles\day5.txt");
+//Day6Logic.AnalyzeDay6(@"TestFiles\day6.txt");
+Day7Logic.AnalyzeDay7(@"TestFiles\day7.txt");
 
 Day7Logic.AnalyzeDay7(@"TestFiles\day7.txt");
 
@@ -16,5 +18,5 @@ Day7Logic.AnalyzeDay7(@"TestFiles\day7.txt");
 //Day3Logic.AnalyzeDay3(@"TestFiles\day3TestData.txt");
 //Day4Logic.AnalyzeDay4(@"TestFiles\day4TestData.txt");
 //Day5Logic.AnalyzeDay5(@"TestFiles\day5TestData.txt");
-
+//Day6Logic.AnalyzeDay6(@"TestFiles\day6TestData.txt");
 Day7Logic.AnalyzeDay7(@"TestFiles\day7TestData.txt");

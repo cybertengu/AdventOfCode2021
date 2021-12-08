@@ -15,7 +15,6 @@ namespace AdventOfCode
             using (StreamReader streamReader = new StreamReader(fileName))
             {
                 string? line;
-
                 while ((line = streamReader.ReadLine()) != null)
                 {
                     if (string.IsNullOrWhiteSpace(line))

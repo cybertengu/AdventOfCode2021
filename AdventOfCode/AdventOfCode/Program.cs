@@ -10,8 +10,6 @@ using AdventOfCode;
 //Day6Logic.AnalyzeDay6(@"TestFiles\day6.txt");
 Day7Logic.AnalyzeDay7(@"TestFiles\day7.txt");
 
-Day7Logic.AnalyzeDay7(@"TestFiles\day7.txt");
-
 // This is to assist me in testing the test data.
 //Day1Logic.AnalyzeDay1(@"TestFiles\day1TestData.txt");
 //Day2Logic.AnalyzeDay2(@"TestFiles\day2TestData.txt");

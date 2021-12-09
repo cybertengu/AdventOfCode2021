@@ -17,4 +17,5 @@ Day7Logic.AnalyzeDay7(@"TestFiles\day7.txt");
 //Day4Logic.AnalyzeDay4(@"TestFiles\day4TestData.txt");
 //Day5Logic.AnalyzeDay5(@"TestFiles\day5TestData.txt");
 //Day6Logic.AnalyzeDay6(@"TestFiles\day6TestData.txt");
-Day7Logic.AnalyzeDay7(@"TestFiles\day7TestData.txt");
+//Day7Logic.AnalyzeDay7(@"TestFiles\day7TestDataSimple.txt");
+//Day7Logic.AnalyzeDay7(@"TestFiles\day7TestData.txt");

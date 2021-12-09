@@ -16,7 +16,6 @@ namespace AdventOfCode
             Console.WriteLine("End of day 8");
         }
 
-        // TODO (David): I need to refactor this code to be cleaner. I think there are parts where the logic is the same.
         static void AnalyzeDay7B(string fileName)
         {
             var lines = Utility.GetLines(fileName);

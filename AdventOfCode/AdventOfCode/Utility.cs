@@ -15,7 +15,6 @@ namespace AdventOfCode
             using (StreamReader streamReader = new StreamReader(fileName))
             {
                 string? line;
-
                 while ((line = streamReader.ReadLine()) != null)
                 {
                     if (string.IsNullOrWhiteSpace(line))
@@ -29,6 +28,18 @@ namespace AdventOfCode
             }
 
             return lines;
+        }
+
+        internal class Position
+        {
+            public int x { get; }
+            public int y { get; }
+
+            public Position(int X, int Y)
+            {
+                x = X;
+                y = Y;
+            }
         }
     }
 }

@@ -11,9 +11,123 @@
             Console.WriteLine("End of day 8");
         }
 
+        static bool wasPositionVisited(List<Utility.Position> positions, Utility.Position positionToCompare)
+        {
+            foreach (Utility.Position position in positions)
+            {
+                if (position.x == positionToCompare.x && position.y == positionToCompare.y)
+                {
+                    return true;
+                }
+            }
+            return false;
+        }
+
         static void AnalyzeDay9B(List<string> lines, Dictionary<Utility.Position, int> lowPointPositions)
         {
-            
+            Stack<Utility.Position> positionStack = new Stack<Utility.Position>();
+            int oneLineLength = lines[0].Length;
+            List<int> basinSize = new List<int>();
+            foreach (var position in lowPointPositions)
+            {
+                List<Utility.Position> alreadyVisited = new List<Utility.Position>() { position.Key };
+                positionStack.Push(position.Key);
+                int counter = 1;
+                while (positionStack.Count > 0)
+                {
+                    Utility.Position currentPosition = positionStack.Pop();
+                    int x = currentPosition.x;
+                    int y = currentPosition.y;
+                    int leftIndex = y - 1;
+                    if (leftIndex > -1)
+                    {
+                        int left = Convert.ToInt32(lines[x][leftIndex].ToString());
+                        if (left != 9)
+                        {
+                            Utility.Position newPosition = new Utility.Position(x, leftIndex);
+                            if (!wasPositionVisited(alreadyVisited, newPosition))
+                            {
+                                positionStack.Push(new Utility.Position(x, leftIndex));
+                                counter++;
+                                alreadyVisited.Add(newPosition);
+                            }
+                        }
+                    }
+                    int downIndex = x + 1;
+                    if (downIndex < lines.Count)
+                    {
+                        int down = Convert.ToInt32(lines[downIndex][y].ToString()); 
+                        if (down != 9)
+                        {
+                            Utility.Position newPosition = new Utility.Position(downIndex, y);
+                            if (!wasPositionVisited(alreadyVisited, newPosition))
+                            {
+                                positionStack.Push(new Utility.Position(downIndex, y));
+                                counter++;
+                                alreadyVisited.Add(newPosition);
+                            }
+                        }
+                    }
+                    int rightIndex = y + 1;
+                    if (rightIndex < oneLineLength)
+                    {
+                        int right = Convert.ToInt32(lines[x][rightIndex].ToString());
+                        if (right != 9)
+                        {
+                            Utility.Position newPosition = new Utility.Position(x, rightIndex);
+                            if (!wasPositionVisited(alreadyVisited, newPosition))
+                            {
+                                positionStack.Push(new Utility.Position(x, rightIndex));
+                                counter++;
+                                alreadyVisited.Add(newPosition);
+                            }
+                        }
+                    }
+                    int upIndex = x - 1;
+                    if (upIndex > -1)
+                    {
+                        int up = Convert.ToInt32(lines[upIndex][y].ToString());
+                        if (up != 9)
+                        {
+                            Utility.Position newPosition = new Utility.Position(upIndex, y);
+                            if (!wasPositionVisited(alreadyVisited, newPosition))
+                            {
+                                positionStack.Push(new Utility.Position(upIndex, y));
+                                counter++;
+                                alreadyVisited.Add(newPosition);
+                            }
+                        }
+                    }
+                }
+
+                basinSize.Add(counter);
+            }
+
+            int firstLargestValue = -1;
+            int secondLargestValue = -1;
+            int thirdLargetValue = -1;
+            foreach (var size in basinSize)
+            {
+                if (size > firstLargestValue)
+                {
+                    // This order of assignment is important.
+                    thirdLargetValue = secondLargestValue;
+                    secondLargestValue = firstLargestValue;
+                    firstLargestValue = size;
+                }
+                else if (size > secondLargestValue)
+                {
+                    thirdLargetValue = secondLargestValue;
+                    secondLargestValue = size;
+                }
+                else if (size > thirdLargetValue)
+                {
+                    thirdLargetValue = size;
+                }
+            }
+
+            long product = (long)firstLargestValue * (long)secondLargestValue * (long)thirdLargetValue;
+            Console.WriteLine(product);
         }
 
         static Dictionary<Utility.Position, int> AnalyzeDay8A(List<string> lines)

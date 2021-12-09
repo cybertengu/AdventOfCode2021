@@ -29,5 +29,17 @@ namespace AdventOfCode
 
             return lines;
         }
+
+        internal class Position
+        {
+            public int x { get; }
+            public int y { get; }
+
+            public Position(int X, int Y)
+            {
+                x = X;
+                y = Y;
+            }
+        }
     }
 }

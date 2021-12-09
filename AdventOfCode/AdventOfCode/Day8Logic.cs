@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace AdventOfCode
 {
-    internal class Day7Logic
+    internal class Day8Logic
     {
         public static void AnalyzeDay7(string fileName)
         {
-            Console.WriteLine("Start of day 7");
+            Console.WriteLine("Start of day 8");
             AnalyzeDay7A(fileName);
             AnalyzeDay7B(fileName);
-            Console.WriteLine("End of day 7");
+            Console.WriteLine("End of day 8");
         }
 
         // TODO (David): I need to refactor this code to be cleaner. I think there are parts where the logic is the same.

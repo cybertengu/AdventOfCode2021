@@ -14,7 +14,7 @@ using AdventOfCode;
 //Day10Logic.AnalyzeDay10(@"TestFiles\day10.txt");
 //Day11Logic.AnalyzeDay(@"TestFiles\day11.txt");
 //Day12Logic.AnalyzeDay(@"TestFiles\day12.txt");
-//Day13Logic.AnalyzeDay(@"TestFiles\day13.txt");
+Day13Logic.AnalyzeDay(@"TestFiles\day13.txt");
 
 // This is to assist me in testing the test data.
 //Day1Logic.AnalyzeDay1(@"TestFiles\day1TestData.txt");

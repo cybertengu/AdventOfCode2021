@@ -26,13 +26,14 @@
         {
             var lines = Utility.GetLines(fileName);
             Dictionary<string, int> clouds = new Dictionary<string, int>();
+            char comma = ',';
             foreach (string line in lines)
             {
                 var positions = line.Split("->");
-                var xy1Values = positions[0].Split(',');
+                var xy1Values = positions[0].Split(comma);
                 var x1 = Convert.ToInt32(xy1Values[0]);
                 var y1 = Convert.ToInt32(xy1Values[1]);
-                var xy2Values = positions[1].Split(',');
+                var xy2Values = positions[1].Split(comma);
                 var x2 = Convert.ToInt32(xy2Values[0]);
                 var y2 = Convert.ToInt32(xy2Values[1]);
 

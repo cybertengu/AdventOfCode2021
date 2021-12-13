@@ -5,12 +5,10 @@
         public static void AnalyzeDay4(string fileName)
         {
             Console.WriteLine("Start of day 4");
-
             var gameA = ReadFile(fileName);
             AnalyzeDay4A(gameA);
             var gameB = ReadFile(fileName);
             AnalyzeDay4B(gameB);
-
             Console.WriteLine("End of day 4");
         }
 

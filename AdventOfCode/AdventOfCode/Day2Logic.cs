@@ -2,11 +2,14 @@
 {
     internal class Day2Logic
     {
+        const string Down = "down";
+        const string Forward = "forward";
+        const string Up = "up";
+
         public static void AnalyzeDay2(string fileName)
         {
             Console.WriteLine("Start of day 2");
             List<string> lines = Utility.GetLines(fileName);
-
             AnalyzeDay2A(lines);
             AnalyzeDay2B(lines);
             Console.WriteLine("End of day 2");
@@ -23,17 +26,17 @@
 
                 switch (command)
                 {
-                    case "forward":
+                    case Forward:
                     { 
                         x += int.Parse(amount);
                         break;
                     }
-                    case "up":
+                    case Up:
                     {
                         y -= int.Parse(amount);
                         break;
                     }
-                    case "down":
+                    case Down:
                     { 
                         y += int.Parse(amount);
                         break;
@@ -57,7 +60,7 @@
 
                 switch (command)
                 {
-                    case "forward":
+                    case Forward:
                     {
                         var forwardAmount = int.Parse(amount);
                         horizontalPosition += forwardAmount;
@@ -68,12 +71,12 @@
                         }
                         break;
                     }
-                    case "up":
+                    case Up:
                     {
                         aim -= int.Parse(amount);
                         break;
                     }
-                    case "down":
+                    case Down:
                     {
                         aim += int.Parse(amount);
                         break;

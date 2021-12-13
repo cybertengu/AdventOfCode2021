@@ -9,7 +9,6 @@
             Console.WriteLine("End of day 12");
         }
 
-
         const string endString = "end"; 
         const string startString = "start";
 

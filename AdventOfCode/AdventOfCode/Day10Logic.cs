@@ -2,6 +2,18 @@
 {
     internal class Day10Logic
     {
+        const char ClosingParenthesis = ')';
+        const char OpeningParenthesis = '(';
+
+        const char ClosingBracket = ']';
+        const char OpeningBracket = '[';
+
+        const char ClosingCurlyBrace = '}';
+        const char OpeningCurlyBracket = '{';
+
+        const char GreaterThanSymbol = '>';
+        const char LessThanSymbol = '<';
+
         public static void AnalyzeDay10(string fileName)
         {
             Console.WriteLine("Start of day 10");
@@ -25,19 +37,19 @@
                     bool didRemoveCharacter = false;
                     switch (character)
                     {
-                        case ')':
+                        case ClosingParenthesis:
                             syntaxHolder.Pop();
                             didRemoveCharacter = true;
                             break;
-                        case ']':
+                        case ClosingBracket:
                             syntaxHolder.Pop();
                             didRemoveCharacter = true;
                             break;
-                        case '}':
+                        case ClosingCurlyBrace:
                             syntaxHolder.Pop();
                             didRemoveCharacter = true;
                             break;
-                        case '>':
+                        case GreaterThanSymbol:
                             syntaxHolder.Pop();
                             didRemoveCharacter = true;
                             break;
@@ -53,21 +65,21 @@
                 {
                     switch (character)
                     {
-                        case '(':
+                        case OpeningParenthesis:
                             total = total * 5 + closingParenthesis;
-                            legalEnd += ")";
+                            legalEnd += ClosingParenthesis.ToString();
                             break;
-                        case '[':
+                        case OpeningBracket:
                             total = total * 5 + closingBracket;
-                            legalEnd += "]";
+                            legalEnd += ClosingBracket.ToString();
                             break;
-                        case '{':
+                        case OpeningCurlyBracket:
                             total = total * 5 + closingCurlyBrace;
-                            legalEnd += "}";
+                            legalEnd += ClosingCurlyBrace.ToString();
                             break;
-                        case '<':
+                        case LessThanSymbol:
                             total = total * 5 + closingGreaterThanSymbol;
-                            legalEnd += ">";
+                            legalEnd += GreaterThanSymbol.ToString();
                             break;
                     }
                 }
@@ -98,9 +110,9 @@
                     bool wasClosingCharacterValid = false;
                     switch (character)
                     {
-                        case ')':
+                        case OpeningParenthesis:
                             char top = syntaxHolder.Pop();
-                            if (top != '(')
+                            if (top != ClosingParenthesis)
                             {
                                 sum += closingParenthesis;
                                 isLineCorrupt = true;
@@ -110,9 +122,9 @@
                                 wasClosingCharacterValid = true;
                             }
                             break;
-                        case ']':
+                        case ClosingBracket:
                             top = syntaxHolder.Pop();
-                            if (top != '[')
+                            if (top != OpeningBracket)
                             {
                                 sum += closingBracket;
                                 isLineCorrupt = true;
@@ -122,9 +134,9 @@
                                 wasClosingCharacterValid = true;
                             }
                             break;
-                        case '}':
+                        case ClosingCurlyBrace:
                             top = syntaxHolder.Pop();
-                            if (top != '{')
+                            if (top != OpeningCurlyBracket)
                             {
                                 sum += closingCurlyBrace;
                                 isLineCorrupt = true;
@@ -134,9 +146,9 @@
                                 wasClosingCharacterValid = true;
                             }
                             break;
-                        case '>':
+                        case GreaterThanSymbol:
                             top = syntaxHolder.Pop();
-                            if (top != '<')
+                            if (top != LessThanSymbol)
                             {
                                 sum += closingGreaterThanSymbol;
                                 isLineCorrupt = true;

@@ -8,15 +8,18 @@ namespace AdventOfCode
 {
     internal class Day8Logic
     {
-        public static void AnalyzeDay7(string fileName)
+        const char PipeCharacter = '|';
+        const char Space = ' ';
+
+        public static void AnalyzeDay8(string fileName)
         {
             Console.WriteLine("Start of day 8");
-            AnalyzeDay7A(fileName);
-            AnalyzeDay7B(fileName);
+            AnalyzeDay8A(fileName);
+            AnalyzeDay8B(fileName);
             Console.WriteLine("End of day 8");
         }
 
-        static void AnalyzeDay7B(string fileName)
+        static void AnalyzeDay8B(string fileName)
         {
             var lines = Utility.GetLines(fileName);
             long sum = 0;
@@ -25,8 +28,8 @@ namespace AdventOfCode
                 string twoLength = string.Empty, threeLength = string.Empty, fourLength = string.Empty, sevenLength = string.Empty;
                 string[] sixLength = new string[3];
                 string[] fiveLength = new string[3];
-                var patterns = line.Split('|');
-                var signalPatterns = patterns[0].Split(' ');
+                var patterns = line.Split(PipeCharacter);
+                var signalPatterns = patterns[0].Split(Space);
                 int fiveLengthCounter = 0;
                 int sixLengthCounter = 0;
                 foreach (string pattern in signalPatterns)
@@ -377,7 +380,7 @@ namespace AdventOfCode
             Bottom = 64
         }
 
-    static void AnalyzeDay7A(string fileName)
+        static void AnalyzeDay8A(string fileName)
         {
             var lines = Utility.GetLines(fileName);
             const int oneSegmentLine = 2;
@@ -392,8 +395,8 @@ namespace AdventOfCode
 
             foreach (string line in lines)
             {
-                var outputValues = line.Split('|');
-                var values = outputValues[1].Split(' ');
+                var outputValues = line.Split(PipeCharacter);
+                var values = outputValues[1].Split(Space);
                 foreach (var value in values)
                 {
                     int numberOfSegmentLine = value.Length;

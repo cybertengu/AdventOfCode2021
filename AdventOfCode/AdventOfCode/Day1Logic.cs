@@ -12,7 +12,6 @@
             Console.WriteLine("End of day 1");
         }
 
-
         static int AnalyzeDay1A(string fileName)
         {
             int? priorInput = null;

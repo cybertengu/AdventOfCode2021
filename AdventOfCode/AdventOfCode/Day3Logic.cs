@@ -2,14 +2,15 @@
 {
     internal class Day3Logic
     {
+        const char One = '1';
+        const char Zero = '0';
+
         public static void AnalyzeDay3(string fileName)
         {
             Console.WriteLine("Start of day 3");
             var lines = Utility.GetLines(fileName);
-
             AnalyzeDay3A(lines);
             AnalyzeDay3B(lines);
-
             Console.WriteLine("End of day 3");
         }
 
@@ -34,7 +35,7 @@
                 for (int i = 0; i < lines.Count; ++i)
                 {
                     var line = lines[i];
-                    if (line[bitIndex] == '1')
+                    if (line[bitIndex] == One)
                     {
                         oneCounter++;
                     }
@@ -47,11 +48,11 @@
                 char commonValue;
                 if (isForOxygenRating)
                 {
-                    commonValue = (oneCounter >= zeroCounter) ? '1' : '0';
+                    commonValue = (oneCounter >= zeroCounter) ? One : Zero;
                 }
                 else
                 {
-                    commonValue = (oneCounter < zeroCounter) ? '1' : '0';
+                    commonValue = (oneCounter < zeroCounter) ? One : Zero;
                 }
 
                 var updatedList = new List<string>();
@@ -92,7 +93,7 @@
                 for (int j = 0; j < line.Length; ++j)
                 {
                     var character = line[j];
-                    if (character == '1')
+                    if (character == One)
                     {
                         oneCounter[j] += 1;
                     }
@@ -108,13 +109,13 @@
             {
                 if (oneCounter[i] > middleAmount)
                 {
-                    gammaRate += "1";
-                    epsilonRate += "0";
+                    gammaRate += One;
+                    epsilonRate += Zero;
                 }
                 else
                 {
-                    gammaRate += "0";
-                    epsilonRate += "1";
+                    gammaRate += Zero;
+                    epsilonRate += One;
                 }
             }
 

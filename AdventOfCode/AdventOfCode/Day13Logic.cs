@@ -2,6 +2,12 @@
 {
     internal class Day13Logic
     {
+        const char Comma = ',';
+        const char Equal = '=';
+        const char HashTag = '#';
+        const char Period = '.';
+        const char PipeCharacter = '|';
+
         public static void AnalyzeDay(string fileName)
         {
             Console.WriteLine("Start of day 13");
@@ -27,7 +33,7 @@
             int biggestY = -1;
             foreach (var line in gridLines)
             {
-                tokens = line.Split(',');
+                tokens = line.Split(Comma);
                 var x = Convert.ToInt32(tokens[0]);
                 if (x > biggestX)
                 {
@@ -99,7 +105,7 @@
             {
                 var tokens = fold.Split(' ');
                 string foldDetails = tokens[tokens.Length - 1];
-                string[] foldTokens = foldDetails.Split('=');
+                string[] foldTokens = foldDetails.Split(Equal);
                 string axis = foldTokens[0];
                 int value = Convert.ToInt32(foldTokens[1]);
 
@@ -153,11 +159,11 @@
                 {
                     if (grid[x, y] == 1)
                     {
-                        Console.Write("#");
+                        Console.Write(HashTag);
                     }
                     else
                     {
-                        Console.Write(".");
+                        Console.Write(Period);
                     }
                 }
                 Console.WriteLine();
@@ -176,7 +182,7 @@
             string firstFold = foldLines[0];
             var tokens = firstFold.Split(' ');
             string fold = tokens[tokens.Length - 1];
-            string[] foldTokens = fold.Split('=');
+            string[] foldTokens = fold.Split(Equal);
             string axis = foldTokens[0];
             int value = Convert.ToInt32(foldTokens[1]);
 
@@ -245,11 +251,11 @@
                 {
                     if (grid[x, y] == 1)
                     {
-                        Console.Write("#");
+                        Console.Write(HashTag);
                     }
                     else
                     {
-                        Console.Write(".");
+                        Console.Write(Period);
                     }
                 }
                 Console.WriteLine();
@@ -264,138 +270,19 @@
                 {
                     if (grid[x, y] == 1)
                     {
-                        Console.Write("#");
+                        Console.Write(HashTag);
                     }
                     else if (y == foldLine)
                     {
-                        Console.Write("|");
+                        Console.Write(PipeCharacter);
                     }
                     else
                     {
-                        Console.Write(".");
+                        Console.Write(Period);
                     }
                 }
                 Console.WriteLine();
             }
-        }
-
-        void OldAnalyzeDayA(string fileName)
-        {
-            List<string> lines = new List<string>();
-            List<string> foldLines = new List<string>();
-
-            using (StreamReader streamReader = new StreamReader(fileName))
-            {
-                string? line;
-                bool isAtFoldLine = false;
-                while ((line = streamReader.ReadLine()) != null)
-                {
-                    if (string.IsNullOrWhiteSpace(line))
-                    {
-                        isAtFoldLine = true;
-                        continue;
-                    }
-                    else if (isAtFoldLine)
-                    {
-                        foldLines.Add(line);
-                    }
-                    else
-                    {
-                        lines.Add(line);
-                    }
-                }
-
-                streamReader.Close();
-            }
-
-            Dictionary<int, HashSet<int>> positions = new Dictionary<int, HashSet<int>>(); 
-            string[] tokens;
-            foreach (var line in lines)
-            {
-                tokens = line.Split(',');
-                var x = Convert.ToInt32(tokens[0]);
-                var y = Convert.ToInt32(tokens[1]);
-
-                if (positions.ContainsKey(x))
-                {
-                    positions[x].Add(y);
-                }
-                else
-                {
-                    positions.Add(x, new HashSet<int> { y });
-                }
-            }
-
-            string firstFold = foldLines[0];
-            tokens = firstFold.Split(' ');
-            string fold = tokens[tokens.Length - 1];
-            string[] foldTokens = fold.Split('=');
-            string axis = foldTokens[0];
-            int value = Convert.ToInt32(foldTokens[1]);
-
-            bool foldAlongYAxis = false;
-            if (axis.Equals("y"))
-            {
-                foldAlongYAxis = true;
-            }
-
-            if (foldAlongYAxis)
-            {
-                int yOffset = value + 1;
-                for (int y = value - 1; y > -1; --y, ++yOffset)
-                {
-                    if (positions.ContainsKey(yOffset))
-                    {
-                        var dots = positions[yOffset];
-                        foreach (var dot in dots)
-                        {
-                            if (positions.ContainsKey(y))
-                            {
-                                positions[y].Add(dot);
-                            }
-                            else
-                            {
-                                positions.Add(y, new HashSet<int> { dot });
-                            }
-                        }
-                    }
-                }
-            }
-
-            long numberOfDots = 0;
-            for (int i = 0; i < value; ++i)
-            {
-                if (positions.ContainsKey(i))
-                {
-                    numberOfDots += positions[i].Count;
-                }
-            }
-
-            for (int x = 0; x < value; ++x)
-            {
-                for (int y = 0; y < 11; ++y)
-                {
-                    if (positions.ContainsKey(x))
-                    {
-                        var position = positions[x];
-                        if (position.Contains(y))
-                        {
-                            Console.Write("#");
-                        }
-                        else
-                        {
-                            Console.Write(".");
-                        }    
-                    }
-                    else
-                    {
-                        Console.Write(".");
-                    }
-                }
-                Console.WriteLine();
-            }
-
-            Console.WriteLine(numberOfDots);
         }
     }
 }

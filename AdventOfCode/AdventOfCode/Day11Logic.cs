@@ -9,14 +9,6 @@
             Console.WriteLine("End of day 11");
         }
 
-        static int WhenAllFlash()
-        {
-            while (true)
-            {
-                
-            }
-        }
-
         static int CalculateOneDay(int rowCount, int columnCount, ref int[,] octopus, Stack<Utility.Position> positions, out bool didAllFlash)
         {
             int flashesTotal = 0;

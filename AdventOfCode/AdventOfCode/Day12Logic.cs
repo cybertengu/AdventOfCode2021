@@ -5,14 +5,14 @@
         public static void AnalyzeDay(string fileName)
         {
             Console.WriteLine("Start of day 12");
-            AnalyzeDayA(fileName);
+            AnalyzeDayAB(fileName);
             Console.WriteLine("End of day 12");
         }
 
         const string endString = "end"; 
         const string startString = "start";
 
-        static void AnalyzeDayA(string fileName)
+        static void AnalyzeDayAB(string fileName)
         {
             var lines = Utility.GetLines(fileName);
             Dictionary<string, List<string>> nodes = new Dictionary<string, List<string>>();

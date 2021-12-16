@@ -166,13 +166,12 @@ namespace AdventOfCode
             List<string> lines2 = Utility.GetLines(fileName);
             int[] temp;
             var edges5x5 = GetEdgesAndTile(lines2, out temp);
-            //var masterEdges = GetEdgesFromTile(masterTile, linesCount, length);
             int totalNodesCount = maxX * maxY;
             Graph graph = new Graph(edges5x5, totalNodesCount);
             int source = 0, dest = totalNodesCount - 1;
             long result = FindLeastPathCost(graph, source, dest, totalNodesCount);
             Console.WriteLine(result);
-            //DEBUGPrintOutGrid(masterTile, maxX);
+            //DEBUGPrintOutGrid(temp, maxX);
         }
 
         static void AnalyzeDayA(List<string> lines)
@@ -255,7 +254,6 @@ namespace AdventOfCode
                 }
             }
 
-            // Debug code
             //DEBUGPrintOutGrid(grid);
 
             return edges;
@@ -269,51 +267,29 @@ namespace AdventOfCode
                 int x = i / columnLength;
                 int y = i % columnLength;
                 int position = i;
-                // TODO: Remove this debug code when done.
-                bool debugTest = false;
                 if (x - 1 > -1)
                 {
                     int aboveXPosition = (x - 1) * columnLength + y;
                     int weight = tile[aboveXPosition];
                     Edge newEdge = new Edge(position, aboveXPosition, weight);
-                    debugTest = edges.Add(newEdge);
-                    if (!debugTest)
-                    {
-                        Console.WriteLine("Encounter false for edge");
-                    }
                 }
                 if (x + 1 < rowCount)
                 {
                     int belowXPosition = (x + 1) * columnLength + y;
                     int weight = tile[belowXPosition];
                     Edge newEdge = new Edge(position, belowXPosition, weight);
-                    debugTest = edges.Add(newEdge);
-                    if (!debugTest)
-                    {
-                        Console.WriteLine("Encounter false for edge");
-                    }
                 }
                 if (y - 1 > -1)
                 {
                     int leftYPosition = x * columnLength + y - 1;
                     int weight = tile[leftYPosition];
                     Edge newEdge = new Edge(position, leftYPosition, weight);
-                    debugTest = edges.Add(newEdge);
-                    if (!debugTest)
-                    {
-                        Console.WriteLine("Encounter false for edge");
-                    }
                 }
                 if (y + 1 < columnLength)
                 {
                     int rightYPosition = x * columnLength + y + 1;
                     int weight = tile[rightYPosition];
                     Edge newEdge = new Edge(position, rightYPosition, weight);
-                    debugTest = edges.Add(newEdge);
-                    if (!debugTest)
-                    {
-                        Console.WriteLine("Encounter false for edge");
-                    }
                 }
             }
             return edges;
@@ -355,11 +331,11 @@ namespace AdventOfCode
         static long FindLeastPathCost(Graph graph, int source, int dest, int n)
         {
             // stores vertex is discovered in BFS traversal or not
-            List<bool> discovered = new List<bool>();// (9*n, false);
+            List<bool> discovered = new List<bool>();
 
             // `predecessor[]` stores predecessor information. It is used
             // to trace a least-cost path from the destination back to the source.
-            List<int> predecessor = new List<int>();// (3*n, -1);
+            List<int> predecessor = new List<int>();
             for (int i = 0; i < 9 * n; ++i)
             {
                 discovered.Add(false);
@@ -369,7 +345,6 @@ namespace AdventOfCode
             // mark the source vertex as discovered
             discovered[source] = true;
 
-
             // create a queue for doing BFS and enqueue source vertex
             Queue<int> queue = new Queue<int>();
             queue.Enqueue(source);
@@ -377,18 +352,14 @@ namespace AdventOfCode
             // loop till queue is empty
             while (queue.Count > 0)
             {
-                // dequeue front node and print it
+                // dequeue front node
                 int curr = queue.Dequeue();
  
                 // if destination vertex is reached
                 if (curr == dest)
                 {
-                    int cost = -1;
-                    // TODO: Remove this print code.
-                    //Console.Write($"The least-cost path between {source} and {dest} is "); 
+                    int cost = -1; 
                     GetLessCostPath(predecessor, dest, ref cost, n);
-                    // TODO: Remove this debug code Printing out the cost
-                    //Console.WriteLine($"having cost {cost}");
                     return cost;
                 }
  
@@ -420,14 +391,6 @@ namespace AdventOfCode
 
             GetLessCostPath(predecessor, predecessor[v], ref cost, n);
             cost++;
- 
-            // TODO: Remove this debug code that was helping to know what path is used.
-            // only consider the original nodes present in the graph
-            //if (v < n) 
-            //{
-                //Console.Write($"{v} ");
-               // Console.Write($"{cost}\n");
-            //}
         }
 
         class Graph
@@ -452,9 +415,6 @@ namespace AdventOfCode
                     int u = edge.Dest;
                     int weight = edge.Weight;
 
-                    // create two new vertices, `v+n` and `v+2×n`, if the edge's weight is `3x`
-                    // Also, split edge (v, u) into (v, v+n), (v+n, v+2N) and (v+2N, u),
-                    // each having weight `x`.
                     if (weight == 9)
                     {
                         AdjacencyList[v].Add(v + n);
@@ -512,6 +472,10 @@ namespace AdventOfCode
                         AdjacencyList[v + 2 * n].Add(v + 3 * n);
                         AdjacencyList[v + 3 * n].Add(u);
                     }
+
+                    // create two new vertices, `v+n` and `v+2×n`, if the edge's weight is `3x`
+                    // Also, split edge (v, u) into (v, v+n), (v+n, v+2N) and (v+2N, u),
+                    // each having weight `x`.
                     else if (weight == 3)
                     {
                         AdjacencyList[v].Add(v + n);
@@ -535,74 +499,5 @@ namespace AdventOfCode
                 }
             }
         }
-
-        //class Graph
-        //{  
-        //    private int _vertices;
-        //    LinkedList<int>[] _adjacencyLists;
-
-        //    public Graph(int vertices)
-        //    {
-        //        _adjacencyLists = new LinkedList<int>[vertices];
-        //        for (int i = 0; i < _adjacencyLists.Length; i++)
-        //        {
-        //            _adjacencyLists[i] = new LinkedList<int>();
-        //        }
-        //        _vertices = vertices;
-        //    }
-
-        //    public void AddEdge(int vertices, int edge)
-        //    {
-        //        _adjacencyLists[vertices].AddLast(edge);
-
-        //    }
-
-        //    public void BFS(int Source)
-        //    {
-        //        bool[] visited = new bool[_vertices];
-        //        for (int i = 0; i < _vertices; i++)
-        //        {
-        //            visited[i] = false;
-        //        }
-
-        //        LinkedList<int> queue = new LinkedList<int>();
-        //        visited[Source] = true;
-        //        queue.AddLast(Source);
-
-        //        while (queue.Any())
-        //        {
-        //            Source = queue.First();
-        //            Console.Write(Source + " ");
-        //            queue.RemoveFirst();
-        //            LinkedList<int> list = _adjacencyLists[Source];
-
-        //            foreach (var val in list)
-        //            {
-        //                if (!visited[val])
-        //                {
-        //                    visited[val] = true;
-        //                    queue.AddLast(val);
-        //                }
-        //            }
-        //        }
-        //    }
-
-        //static void Main(string[] args)
-        //{
-        //    Graph g = new Graph(4);
-
-        //    g.AddEdge(0, 1);
-        //    g.AddEdge(0, 2);
-        //    g.AddEdge(1, 2);
-        //    g.AddEdge(2, 0);
-        //    g.AddEdge(2, 3);
-        //    g.AddEdge(3, 3);
-
-        //    Console.Write("Following is Breadth First " +
-        //                  "Traversal(starting from " +
-        //                  "vertex 2)\n");
-        //    g.BFS(2);
-        //}
-    //}
     }
 }

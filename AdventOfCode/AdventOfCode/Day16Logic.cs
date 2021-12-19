@@ -4,6 +4,7 @@ namespace AdventOfCode
 {
     internal class Day16Logic
     {
+        public const string ONE = "1";
 
         public static Dictionary<char, string> HexadecimalToBinary = new Dictionary<char, string>()
             {
@@ -29,6 +30,11 @@ namespace AdventOfCode
         {
             Console.WriteLine("Start of day 16");
             var lines = Utility.GetLines(fileName);
+
+            // TestDayBWithSampleInput had additional test data suggested by others
+            // in reddit. For example, some input will overflow if you don't have
+            // right data type.
+            TestDayBWithSampleInput();
             AnalyzeDayA(lines);
             AnalyzeDayB(lines);
             Console.WriteLine("End of day 16");
@@ -36,11 +42,12 @@ namespace AdventOfCode
 
         static void AnalyzeDayB(List<string> lines)
         {
+            // I made a foreach loop because I wanted to test various inputs despite
+            // the real data to go against is only one line.
             foreach (var line in lines)
             {
                 StringBuilder fullBinaryStringBuilder = new StringBuilder();
                 var firstLine = line;
-                Console.WriteLine(firstLine);
                 foreach (var character in firstLine)
                 {
                     var binary = HexadecimalToBinary[character];
@@ -49,356 +56,204 @@ namespace AdventOfCode
 
                 string fullBinaryString = fullBinaryStringBuilder.ToString();
                 int fullBinaryLength = fullBinaryString.Length;
-                //Console.WriteLine(fullBinaryStringBuilder.ToString());
-                Header header = new Header();
-                int currentPosition = header.AddHeader(fullBinaryString, 0);
-                int lastIndex = header.Ids.Count - 1;
-                var idValue = header.Ids[lastIndex];
+                int currentPosition = 0;
+                Packet packet = new Packet();
+                DoAllID(fullBinaryString, currentPosition, ref packet);
 
-                if (idValue == 4)
+                for (int i = packet.SubPackets.Count - 1; i > -1; --i)
                 {
-                    currentPosition = DoID4(fullBinaryString, currentPosition, ref header);
+                    var currentPacket = packet.SubPackets[i];
+                    int subPacketsCount = currentPacket.SubPackets.Count;
+                    bool areThereMoreSubPacket = subPacketsCount > 0;
+                    Stack<Packet> stack = new Stack<Packet>();
+                    stack.Push(currentPacket);
+                    while (stack.Count > 0)
+                    {
+                        currentPacket = stack.Pop();
+                        if (currentPacket.SubPackets.Count > 0 && currentPacket.LiteralValue == -1)
+                        {
+                            bool wasAllWithValidValue = true;
+                            stack.Push(currentPacket);
+                            foreach (var subPacket in currentPacket.SubPackets)
+                            {
+                                if (subPacket.LiteralValue == -1)
+                                {
+                                    stack.Push(subPacket);
+                                    wasAllWithValidValue = false;
+                                }
+                            }
+
+                            if (wasAllWithValidValue)
+                            {
+                                currentPacket = stack.Pop();
+                                RunThroughIDCase(ref currentPacket);
+                            }
+                        }
+                    }
+                }
+                RunThroughIDCase(ref packet);
+                Console.WriteLine(packet.LiteralValue);
+            }
+        }
+
+        static void RunThroughIDCase(ref Packet currentPacket)
+        {
+            var id = currentPacket.ID;
+            switch (id)
+            {
+                case 0:
+                    long sum = 0;
+                    foreach (var subPacket in currentPacket.SubPackets)
+                    {
+                        sum += subPacket.LiteralValue;
+                    }
+                    currentPacket.LiteralValue = sum;
+                    break;
+                case 1:
+                    long product = 1;
+                    foreach (var subPacket in currentPacket.SubPackets)
+                    {
+                        product *= subPacket.LiteralValue;
+                    }
+                    currentPacket.LiteralValue = product;
+                    break;
+                case 2:
+                    List<long> values = new List<long>();
+                    foreach (var subPacket in currentPacket.SubPackets)
+                    {
+                        values.Add(subPacket.LiteralValue);
+                    }
+                    values.Sort();
+                    long minimum = values[0];
+                    currentPacket.LiteralValue = minimum;
+                    break;
+                case 3:
+                    values = new List<long>();
+                    foreach (var subPacket in currentPacket.SubPackets)
+                    {
+                        values.Add(subPacket.LiteralValue);
+                    }
+                    values.Sort();
+                    long maximum = values[values.Count - 1];
+                    currentPacket.LiteralValue = maximum;
+                    break;
+                case 5:
+                    var firstSubPacket = currentPacket.SubPackets[0];
+                    long firstValue = firstSubPacket.LiteralValue;
+                    var secondSubPacket = currentPacket.SubPackets[1];
+                    long secondValue = secondSubPacket.LiteralValue;
+                    int greaterThan = (firstValue > secondValue) ? 1 : 0;
+                    currentPacket.LiteralValue = greaterThan;
+                    break;
+                case 6:
+                    firstSubPacket = currentPacket.SubPackets[0];
+                    firstValue = firstSubPacket.LiteralValue;
+                    secondSubPacket = currentPacket.SubPackets[1];
+                    secondValue = secondSubPacket.LiteralValue;
+                    int lessThan = (firstValue < secondValue) ? 1 : 0;
+                    currentPacket.LiteralValue = lessThan;
+                    break;
+                case 7:
+                    firstSubPacket = currentPacket.SubPackets[0];
+                    firstValue = firstSubPacket.LiteralValue;
+                    secondSubPacket = currentPacket.SubPackets[1];
+                    secondValue = secondSubPacket.LiteralValue;
+                    int equalTo = (firstValue == secondValue) ? 1 : 0;
+                    currentPacket.LiteralValue = equalTo;
+                    break;
+            }
+        }
+
+        static int DoAllID(string fullBinaryString, int currentPosition, ref Packet packet)
+        {
+            string versionString = fullBinaryString.Substring(currentPosition, 3);
+            int version = Convert.ToInt32(versionString, 2);
+            packet.Version = version;
+            currentPosition += 3;
+            string idString = fullBinaryString.Substring(currentPosition, 3);
+            int id = Convert.ToInt32(idString, 2);
+            packet.ID = id;
+            currentPosition += 3;
+            string leadingIdString = fullBinaryString.Substring(currentPosition++, 1);
+            int leadingId = Convert.ToInt32(leadingIdString, 2);
+
+            if (id == 4)
+            {
+                StringBuilder stringBuilder = new StringBuilder();
+                while (leadingId != 0)
+                {
+                    string fourBits = fullBinaryString.Substring(currentPosition, 4);
+                    stringBuilder.Append(fourBits);
+                    currentPosition += 4;
+                    leadingIdString = fullBinaryString.Substring(currentPosition++, 1);
+                    leadingId = Convert.ToInt32(leadingIdString, 2);
+                }
+                string lastFourBits = fullBinaryString.Substring(currentPosition, 4);
+                stringBuilder.Append(lastFourBits);
+                currentPosition += 4;
+                string literalValueString = stringBuilder.ToString();
+                packet.LiteralValue = Convert.ToInt64(literalValueString, 2);
+            }
+            else
+            {
+                if (leadingId == 0)
+                {
+                    string totalLengthInBitsString = fullBinaryString.Substring(currentPosition, 15);
+                    long totalLengthInBits = Convert.ToInt64(totalLengthInBitsString, 2);
+                    currentPosition += 15;
+                    long fullLengthAfterPosition = currentPosition + totalLengthInBits;
+                    while (currentPosition < fullLengthAfterPosition)
+                    {
+                        currentPosition = DoSubPacket(fullBinaryString, currentPosition, ref packet);
+                    }
                 }
                 else
                 {
-                    currentPosition = DoNotID4(fullBinaryString, currentPosition, ref header);
-                    header.PackageIndex++;
-                }
-
-                /* 
-                    Packets with type ID 0 are sum packets - their value is the sum of 
-                the values of their sub-packets. If they only have a single sub-packet, 
-                their value is the value of the sub-packet.
-                    Packets with type ID 1 are product packets - their value is the 
-                result of multiplying together the values of their sub-packets. If they
-                only have a single sub-packet, their value is the value of the 
-                sub-packet.
-                    Packets with type ID 2 are minimum packets - their value is the 
-                minimum of the values of their sub-packets.
-                    Packets with type ID 3 are maximum packets - their value is the 
-                maximum of the values of their sub-packets.
-                    Packets with type ID 5 are greater than packets - their value is 1 
-                if the value of the first sub-packet is greater than the value of the 
-                second sub-packet; otherwise, their value is 0. These packets always 
-                have exactly two sub-packets.
-                    Packets with type ID 6 are less than packets - their value is 1 if 
-                the value of the first sub-packet is less than the value of the second 
-                sub-packet; otherwise, their value is 0. These packets always have 
-                exactly two sub-packets.
-                  Packets with type ID 7 are equal to packets - their value is 1 if 
-                the value of the first sub-packet is equal to the value of the second 
-                sub-packet; otherwise, their value is 0. These packets always have 
-                exactly two sub-packets.
-                */
-                Stack<int> stack = new Stack<int>();
-                //foreach (var id in header.Ids)
-                //{
-                //    stack.Push(id);
-                //}
-                stack.Push(header.Ids[0]);
-                int idsCounter = 1;
-
-                Stack<long> valueResult = new Stack<long>();
-                while (stack.Count > 0)
-                {
-                    int id = stack.Pop();
-                    if (id == 4)
+                    string numberOfSubPacketsString = fullBinaryString.Substring(currentPosition, 11);
+                    long numberOfSubPackets = Convert.ToInt64(numberOfSubPacketsString, 2);
+                    currentPosition += 11;
+                    for (int i = 0; i < numberOfSubPackets; ++i)
                     {
-                        List<int> gather4s = new List<int>();
-                        while (id == 4)
-                        {
-                            gather4s.Add(id);
-                            id = stack.Pop();
-                        }
-
-                        // Do rule for this new id found. TODO still.
-                        switch (id)
-                        {
-                            case 0:
-                                // Do rule 0:
-                                long sum = 0;
-                                foreach (int currentId in gather4s)
-                                {
-                                    lastIndex = header.SubPackagesValues.Count - 1;
-                                    sum += header.SubPackagesValues[lastIndex];
-                                    header.SubPackagesValues.RemoveAt(lastIndex);
-                                }
-                                valueResult.Push(sum);
-                                break;
-                            case 1:
-                                // Do rule 1:
-                                long product = 1;
-                                foreach (int currentId in gather4s)
-                                {
-                                    lastIndex = header.SubPackagesValues.Count - 1;
-                                    product *= header.SubPackagesValues[lastIndex];
-                                    header.SubPackagesValues.RemoveAt(lastIndex);
-                                }
-                                valueResult.Push(product);
-                                break;
-                            case 2:
-                                // Do rule 2:
-                                List<long> newList = new List<long>();
-                                foreach (int currentId in gather4s)
-                                {
-                                    lastIndex = header.SubPackagesValues.Count - 1;
-                                    newList.Add(header.SubPackagesValues[lastIndex]);
-                                    header.SubPackagesValues.RemoveAt(lastIndex);
-                                }
-                                newList.Sort();
-                                long minimum = newList[0];
-                                valueResult.Push(minimum);
-                                break;
-                            case 3:
-                                // Do rule 3:
-                                newList = new List<long>();
-                                foreach (int currentId in gather4s)
-                                {
-                                    lastIndex = header.SubPackagesValues.Count - 1;
-                                    newList.Add(header.SubPackagesValues[lastIndex]);
-                                    header.SubPackagesValues.RemoveAt(lastIndex);
-                                }
-                                newList.Sort();
-                                long maximum = newList[newList.Count - 1];
-                                valueResult.Push(maximum);
-                                break;
-                            case 4:
-                                // Do rule 4:
-                                // Shouldn't happen, but be safe right?
-                                foreach (int currentId in gather4s)
-                                {
-                                    lastIndex = header.SubPackagesValues.Count - 1;
-                                    valueResult.Push(header.SubPackagesValues[lastIndex]);
-                                    header.SubPackagesValues.RemoveAt(lastIndex);
-                                }
-                                break;
-                            case 5:
-                                // Do rule 5:
-                                lastIndex = header.SubPackagesValues.Count - 1;
-                                long firstValue = 0, secondValue = 0;
-                                int counter = 0;
-                                foreach (int currentId in gather4s)
-                                {
-                                    if (counter == 0)
-                                    {
-                                        firstValue = header.SubPackagesValues[lastIndex];
-                                        header.SubPackagesValues.RemoveAt(lastIndex--);
-                                    }
-                                    else if (counter == 1)
-                                    {
-                                        secondValue = header.SubPackagesValues[lastIndex];
-                                        header.SubPackagesValues.RemoveAt(lastIndex--);
-                                    }
-                                    counter++;
-                                }
-                                int greaterThanResult = (firstValue > secondValue) ? 1 : 0;
-                                valueResult.Push(greaterThanResult);
-                                break;
-                            case 6:
-                                // Do rule 6:
-                                lastIndex = header.SubPackagesValues.Count - 1;
-                                firstValue = header.SubPackagesValues[lastIndex];
-                                secondValue = header.SubPackagesValues[lastIndex - 1];
-                                header.SubPackagesValues.RemoveAt(lastIndex);
-                                header.SubPackagesValues.RemoveAt(lastIndex - 1);
-                                int lessThanResult = (firstValue < secondValue) ? 1 : 0;
-                                valueResult.Push(lessThanResult);
-                                break;
-                            case 7:
-                                // Do rule 7:
-                                lastIndex = header.SubPackagesValues.Count - 1;
-                                firstValue = header.SubPackagesValues[lastIndex];
-                                secondValue = header.SubPackagesValues[lastIndex - 1];
-                                header.SubPackagesValues.RemoveAt(lastIndex);
-                                header.SubPackagesValues.RemoveAt(lastIndex - 1);
-                                int equalToResult = (firstValue == secondValue) ? 1 : 0;
-                                valueResult.Push(equalToResult);
-                                break;
-                        }
+                        currentPosition = DoSubPacket(fullBinaryString, currentPosition, ref packet);
                     }
-                    else
-                    {
-                        switch (idValue)
-                        {
-                            case 0:
-                                long sum = 0;
-                                int amount = valueResult.Count;
-                                for (int i = 0; i < amount; ++i)
-                                {
-                                    sum += valueResult.Pop();
-                                }
-                                valueResult.Push(sum);
-                                break;
-                            case 1:
-                                long product = 1;
-                                amount = valueResult.Count;
-                                for (int i = 0; i < amount; ++i)
-                                {
-                                    product *= valueResult.Pop();
-                                }
-                                valueResult.Push(product);
-                                break;
-                            case 2:
-                                List<long> newList = new List<long>();
-                                amount = valueResult.Count;
-                                for (int i = 0; i < amount; ++i)
-                                {
-                                    newList.Add(valueResult.Pop());
-                                }
-                                newList.Sort();
-                                long minimum = newList[0];
-                                valueResult.Push(minimum);
-                                break;
-                            case 3:
-                                newList = new List<long>();
-                                amount = valueResult.Count;
-                                for (int i = 0; i < amount; ++i)
-                                {
-                                    newList.Add(valueResult.Pop());
-                                }
-                                newList.Sort();
-                                lastIndex = newList.Count - 1;
-                                long maximum = newList[lastIndex];
-                                valueResult.Push(maximum);
-                                break;
-                            case 5:
-                                long firstValue = valueResult.Pop();
-                                long secondValue = valueResult.Pop();
-                                long greaterThan = (firstValue > secondValue) ? 1 : 0;
-                                valueResult.Push(greaterThan);
-                                break;
-                            case 6:
-                                firstValue = valueResult.Pop();
-                                secondValue = valueResult.Pop();
-                                long lessThan = (firstValue < secondValue) ? 1 : 0;
-                                valueResult.Push(lessThan);
-                                break;
-                            case 7:
-                                firstValue = valueResult.Pop();
-                                secondValue = valueResult.Pop();
-                                long equalTo = (firstValue == secondValue) ? 1 : 0;
-                                valueResult.Push(equalTo);
-                                break;
-                        }
-                    }
-                }
-
-                Console.WriteLine(valueResult.Pop());
-                if (valueResult.Count > 0)
-                {
-                    Console.WriteLine("There is still a bug somewhere!");
-                }
-
-                //int firstId = header.Ids[0];
-                //switch (firstId)
-                //{
-                //    case 0:
-                //        long sum = 0;
-                //        int index = 1;
-                //        int counter = 0;
-                //        while (index < header.Ids.Count && header.Ids[index] == 4)
-                //        {
-                //            sum += header.SubPackagesValues[header.PackageIndex - 1][counter];
-                //            counter++;
-                //            index++;
-                //        }
-                //        Console.WriteLine($"Sum: {sum}");
-                //        break;
-                //    case 1:
-                //        long product = 1;
-                //        index = 1;
-                //        counter = 0;
-                //        while (index < header.Ids.Count && header.Ids[index] == 4)
-                //        {
-                //            product *= header.SubPackagesValues[header.PackageIndex - 1][counter];
-                //            index++;
-                //            counter++;
-                //        }
-                //        Console.WriteLine($"Product: {product}");
-                //        break;
-                //    case 2:
-                //        index = 1;
-                //        List<long> allValues = new List<long>();
-                //        counter = 0;
-                //        while (index < header.Ids.Count && header.Ids[index] == 4)
-                //        {
-                //            allValues.Add(header.SubPackagesValues[header.PackageIndex - 1][counter]);
-                //            counter++;
-                //            index++;
-                //        }
-                //        allValues.Sort();
-                //        long minimum = allValues[0];
-                //        Console.WriteLine($"Minimum: {minimum}");
-                //        break;
-                //    case 3:
-                //        index = 1;
-                //        allValues = new List<long>();
-                //        counter = 0;
-                //        while (index < header.Ids.Count && header.Ids[index] == 4)
-                //        {
-                //            allValues.Add(header.SubPackagesValues[header.PackageIndex - 1][counter]);
-                //            counter++;
-                //            index++;
-                //        }
-                //        allValues.Sort();
-                //        long maximum = allValues[allValues.Count - 1];
-                //        Console.WriteLine($"Maximum: {maximum}");
-                //        break;
-                //    case 4:
-                //        long literalValue = header.SubPackagesValues[0][0];
-                //        Console.WriteLine($"Didn't think this will happen but literal value is this: {literalValue}");
-                //        break;
-                //    case 5:
-                //        int packageIndex = header.PackageIndex;
-                //        var values = header.SubPackagesValues[packageIndex - 1];
-                //        long firstValue = values[0];
-                //        long secondValue = values[1];
-                //        int result = (firstValue > secondValue) ? 1 : 0;
-                //        Console.WriteLine($"Greater Than Result: {result}");
-                //        break;
-                //    case 6:
-                //        packageIndex = header.PackageIndex;
-                //        values = header.SubPackagesValues[packageIndex - 1];
-                //        firstValue = values[0];
-                //        secondValue = values[1];
-                //        result = (firstValue < secondValue) ? 1 : 0;
-                //        Console.WriteLine($"Less Than Result: {result}");
-                //        break;
-                //    case 7:
-                //        packageIndex = header.PackageIndex - 1;
-                //        if (packageIndex > 1)
-                //        {
-
-                //        }
-                //        values = header.SubPackagesValues[packageIndex - 1];
-                //        firstValue = values[0];
-                //        secondValue = values[1];
-                //        result = (firstValue == secondValue) ? 1 : 0;
-                //        Console.WriteLine($"Equal To Result: {result}");
-                //        break;
-                //}
-
-                if (fullBinaryLength - currentPosition > 6)
-                {
-                    Console.WriteLine("Oh dear, there are more to do on this string then.");
                 }
             }
+
+            return currentPosition;
+        }
+
+        static int DoSubPacket(string fullBinaryString, int currentPosition, ref Packet packet)
+        {
+            Packet subPacket = new Packet();
+            currentPosition = DoAllID(fullBinaryString, currentPosition, ref subPacket);
+            packet.SubPackets.Add(subPacket);
+            return currentPosition;
+        }
+
+        class Packet
+        {
+            public int Version;
+            public int ID;
+            public long LiteralValue = -1;
+            public List<Packet> SubPackets = new List<Packet>();
         }
 
         public static void TestDayBWithSampleInput()
         {
-            List<string> lines = new List<string>() { "C200B40A82", "04005AC33890", "880086C3E88112",
+            Console.WriteLine("Test data running:");
+            List<string> lines = new List<string>() { "3232D42BF9400", "26008C8E2DA0191C5B400", "8A004A801A8002F478", "C200B40A82", "04005AC33890", "880086C3E88112",
             "CE00C43D881120","D8005AC2A8F0","F600BC2D8F","9C005AC2F8F0", "9C0141080250320F1802104A08"};
             AnalyzeDayB(lines);
+            Console.WriteLine("End of test data");
         }
 
+        // This solution was not designed well enough to handle part 2.
         static void AnalyzeDayA(List<string> lines)
         {
             foreach (var line in lines)
             {
                 StringBuilder fullBinaryStringBuilder = new StringBuilder();
                 var firstLine = line;
-                Console.WriteLine(firstLine);
                 foreach (var character in firstLine)
                 {
                     var binary = HexadecimalToBinary[character];
@@ -406,8 +261,7 @@ namespace AdventOfCode
                 }
 
                 string fullBinaryString = fullBinaryStringBuilder.ToString();
-                int fullBinaryLength = fullBinaryString.Length;
-                //Console.WriteLine(fullBinaryStringBuilder.ToString());
+                long fullBinaryLength = fullBinaryString.Length;
                 Header header = new Header();
                 int currentPosition = header.AddHeader(fullBinaryString, 0);
                 int lastIndex = header.Ids.Count - 1;
@@ -420,11 +274,6 @@ namespace AdventOfCode
                 else
                 {
                     currentPosition = DoNotID4(fullBinaryString, currentPosition, ref header);
-                }
-
-                if (fullBinaryLength - currentPosition > 6)
-                {
-                    Console.WriteLine("Oh dear, there are more to do on this string then.");
                 }
 
                 long sum = 0;
@@ -450,9 +299,6 @@ namespace AdventOfCode
             literalValueStringBuilder.Append(fullBinaryString.Substring(offset, 4));
             string literalValueString = literalValueStringBuilder.ToString();
             long literalValue = Convert.ToInt64(literalValueString, 2);
-            //Console.WriteLine(literalValue);
-            int packageIndex = header.PackageIndex;
-            header.SubPackagesValues.Add(literalValue);
             currentPosition = offset + 4;
 
             return currentPosition;
@@ -466,8 +312,8 @@ namespace AdventOfCode
             {
                 string next15Bits = fullBinaryString.Substring(currentPosition, 15);
                 currentPosition += 15;
-                int value = Convert.ToInt32(next15Bits, 2);
-                int counter = 0;
+                long value = Convert.ToInt64(next15Bits, 2);
+                long counter = 0;
                 while (counter < value)
                 {
                     currentPosition = header.AddHeader(fullBinaryString, currentPosition);
@@ -482,12 +328,9 @@ namespace AdventOfCode
                     }
                     else
                     {
-                        // TODO: I am guessing this part is potentially recursive.
-                        //Console.WriteLine("Does this get called A");
                         int newCurrentPosition = DoNotID4(fullBinaryString, currentPosition, ref header);
                         counter += newCurrentPosition - currentPosition;
                         currentPosition = newCurrentPosition;
-                        header.PackageIndex++;
                     }
                 }
             }
@@ -507,10 +350,7 @@ namespace AdventOfCode
                     }
                     else
                     {
-                        // TODO: I am guessing this part is potentially recursive.
-                        //Console.WriteLine("Does this get called B");
                         currentPosition = DoNotID4(fullBinaryString, currentPosition, ref header);
-                        header.PackageIndex++;
                     }
                 }
             }
@@ -522,9 +362,6 @@ namespace AdventOfCode
         {
             public List<int> Ids = new List<int>();
             public List<int> Versions = new List<int>();
-            //public List<long> SubPackagesValues = new List<long>();
-            public int PackageIndex = 0;
-            public List<long> SubPackagesValues = new List<long>();
 
             public int AddHeader(string fullBinaryString, int position)
             {

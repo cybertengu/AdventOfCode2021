@@ -1,1 +1,2 @@
-﻿target area: x=207..263, y=-115..-63
+﻿Player 1 starting position: 10
+Player 2 starting position: 1

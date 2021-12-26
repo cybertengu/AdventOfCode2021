@@ -7,9 +7,9 @@
             Console.WriteLine("Start of day 24");
             var lines = Utility.GetLines(fileName);
             int[] largestInputs = new int[] { 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9, 9 };
-            AnalyzeDayA2(lines, largestInputs);
+            AnalyzeDayAB(lines, largestInputs);
             int[] smallestInputs = new int[] { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 };
-            AnalyzeDayA2(lines, smallestInputs);
+            AnalyzeDayAB(lines, smallestInputs);
             Console.WriteLine("End of day 24");
         }
 
@@ -31,7 +31,7 @@
             }
         }
 
-        static void AnalyzeDayA2(List<string> lines, int[] modelNumber)
+        static void AnalyzeDayAB(List<string> lines, int[] modelNumber)
         {
             Stack<Info> numbers = new Stack<Info>();
             for (int i = 0; i < 14; ++i)

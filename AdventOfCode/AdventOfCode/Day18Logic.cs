@@ -7,8 +7,8 @@ namespace AdventOfCode
         public static void AnalyzeDay(string fileName)
         {
             Console.WriteLine("Start of day 18");
-            //TestData();
-            AnalyzeDayA(fileName);
+            TestVariousData();
+            //AnalyzeDayA(fileName);
             Console.WriteLine("End of day 18");
         }
 
@@ -27,7 +27,7 @@ namespace AdventOfCode
                         if (isFirstNode)
                         {
                             isFirstNode = false;
-                            topNode.Value = $"{character}";
+                            //topNode.Value = $"{character}";
                         }
                     }
                 }
@@ -36,92 +36,86 @@ namespace AdventOfCode
             Console.WriteLine(magniture);
         }
 
+        const char Space = ' ';
+
         class ShellFish
         {
-            public string Value = string.Empty;
+            public char Value = Space;
             public ShellFish? Left = null;
             public ShellFish? Right = null;
+            public bool IsNumber = false;
+            public int Number = -1;
+            public bool IsPairDone = false;
 
-            public void InsertNode(ShellFish firstNode, ShellFish shellFish)
+            public void InsertNode(ref ShellFish firstNode, ShellFish shellFish)
             {
-                if (firstNode == null)
+                if (firstNode.Value.Equals(Space))
                 {
-                    Console.WriteLine("Something went horribly wrong. Top-most node is null");
+                    firstNode = shellFish;
+                    return;
                 }
 
-                bool isInserted = false;
-                ShellFish nextShellFish;
-                ShellFish currentFish = firstNode;
-                while (!isInserted)
+                ShellFish? currentFish = firstNode;
+                if (currentFish?.Left == null)
                 {
-                    if (currentFish.Left != null)
-                    {
-
-                    }
-                    nextShellFish = firstNode.Left;
+                    currentFish.Left = shellFish;
+                }
+                else if (currentFish.Left.IsNumber)
+                {
+                    currentFish.Right = shellFish;
                 }    
             }
         }
 
-        static void TestData()
+        const char LeftSquareBracket = '[';
+        const char Comma = ',';
+        const char RightSquareBracket = ']';
+
+        static void TestVariousData()
         {
-            Point closestPoint = new Point(20, -10);
-            Point furthestPoint = new Point(30, -5);
-            List<Point> velocities = new List<Point>();
-            velocities.Add(new Point(7, 2));
-            velocities.Add(new Point(6, 3));
-            velocities.Add(new Point(9, 0));
-            velocities.Add(new Point(17, -4));
-            foreach (var velocity in velocities)
-            {
-                int highestHeight = 0;
-                bool didLandInLandingArea = DidLandInLandingArea(velocity, closestPoint, furthestPoint, out highestHeight);
-                Console.WriteLine($"Result: {didLandInLandingArea} for ({velocity.X}, {velocity.Y})");
-            }
+            TestData("[1,2]");
+            TestData("[[1,2],3]");
+            /*
+             [[1,2],3]
+[9,[8,7]]
+[[1,9],[8,5]]
+[[[[1,2],[3,4]],[[5,6],[7,8]]],9]
+[[[9,[3,8]],[[0,9],6]],[[[3,7],[4,9]],3]]
+[[[[1,3],[5,3]],[[1,3],[8,7]]],[[[4,9],[6,9]],[[8,2],[7,3]]]]
+             */
         }
 
-        static bool DidLandInLandingArea(Point velocity, Point closestPoint, Point furthestPoint, out int highestPoint)
+        static void TestData(string line)
         {
-            highestPoint = 0;
-            bool isPassTargetArea = false;
-            Point currentLocation = new Point(0, 0);
-            int leastX = closestPoint.X;
-            int leastY = closestPoint.Y;
-            int mostX = furthestPoint.X;
-            int mostY = furthestPoint.Y;
-
-            while (!isPassTargetArea)
+            ShellFish topNode = new ShellFish();
+            int counter = -1;
+            foreach (char c in line)
             {
-                currentLocation.X += velocity.X;
-                currentLocation.Y += velocity.Y--;
-                if (currentLocation.Y > highestPoint)
+                ShellFish newShellFish = new ShellFish();
+                if (c.Equals(LeftSquareBracket))
                 {
-                    highestPoint = currentLocation.Y;
+                    newShellFish.Value = LeftSquareBracket;
+                    counter++;
+                    topNode.InsertNode(ref topNode, newShellFish, counter);
                 }
-                
-                if (velocity.X < 0)
+                else if (c.Equals(Comma))
                 {
-                    velocity.X++;
+                    continue;
                 }
-                // I thought about doing absolute value and not worry about negative
-                // numbers, but this solution was fast enough for the problem, so 
-                // I left this in.
-                else if (velocity.X > 0)
+                else if (c.Equals(RightSquareBracket))
                 {
-                    velocity.X--;
+                    counter--;
+                    continue;
                 }
-                if (currentLocation.Y < leastY)
+                else
                 {
-                    isPassTargetArea = true;
-                }
-                else if (currentLocation.X >= leastX && currentLocation.X <= mostX &&
-                    currentLocation.Y >= leastY && currentLocation.Y <= mostY)
-                {
-                    // Landed on the target platform.
-                    break;
+                    int value = Convert.ToInt32(c.ToString());
+                    newShellFish.IsNumber = true;
+                    newShellFish.Number = value;
+                    topNode.InsertNode(ref topNode, newShellFish);
                 }
             }
-            return !isPassTargetArea;
+            Console.WriteLine($"Testing data: {line}");
         }
     }
 }

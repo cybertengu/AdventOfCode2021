@@ -15,13 +15,20 @@ namespace AdventOfCode
         static void AnalyzeDayA(string fileName)
         {
             var lines = Utility.GetLines(fileName);
+            bool isFirstNode = true;
+            ShellFish topNode = new ShellFish();
             foreach (var line in lines)
             {
                 foreach(var character in line)
                 {
-                    if (character == '[')
+                    ShellFish shellFish = new ShellFish();
+                    if (character.Equals('['))
                     {
-                        continue;
+                        if (isFirstNode)
+                        {
+                            isFirstNode = false;
+                            topNode.Value = $"{character}";
+                        }
                     }
                 }
             }
@@ -31,10 +38,29 @@ namespace AdventOfCode
 
         class ShellFish
         {
-            int Value = -1;
-            bool IsPartOfPair = false;
-            ShellFish Left;
-            ShellFish Right;
+            public string Value = string.Empty;
+            public ShellFish? Left = null;
+            public ShellFish? Right = null;
+
+            public void InsertNode(ShellFish firstNode, ShellFish shellFish)
+            {
+                if (firstNode == null)
+                {
+                    Console.WriteLine("Something went horribly wrong. Top-most node is null");
+                }
+
+                bool isInserted = false;
+                ShellFish nextShellFish;
+                ShellFish currentFish = firstNode;
+                while (!isInserted)
+                {
+                    if (currentFish.Left != null)
+                    {
+
+                    }
+                    nextShellFish = firstNode.Left;
+                }    
+            }
         }
 
         static void TestData()

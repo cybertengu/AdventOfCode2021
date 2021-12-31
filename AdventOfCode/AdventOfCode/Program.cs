@@ -25,8 +25,8 @@ using AdventOfCode;
 //Day21Logic.AnalyzeDay(@"TestFiles\day21.txt");
 //Day22Logic.AnalyzeDay(@"TestFiles\day22.txt");
 //Day23Logic.AnalyzeDay(@"TestFiles\day23.txt");
-Day24Logic.AnalyzeDay(@"TestFiles\day24.txt");
-//Day25Logic.AnalyzeDay(@"TestFiles\day25.txt");
+//Day24Logic.AnalyzeDay(@"TestFiles\day24.txt");
+Day25Logic.AnalyzeDay(@"TestFiles\day25.txt");
 
 // This is to assist me in testing the test data.
 //Day1Logic.AnalyzeDay1(@"TestFiles\day1TestData.txt");
@@ -58,4 +58,4 @@ Day24Logic.AnalyzeDay(@"TestFiles\day24.txt");
 //Day22Logic.AnalyzeDay(@"TestFiles\day22TestData.txt");
 //Day23Logic.AnalyzeDay(@"TestFiles\day23TestData.txt");
 //Day24Logic.AnalyzeDay(@"TestFiles\day24TestData.txt");
-//Day25Logic.AnalyzeDay(@"TestFiles\day25TestData.txt");
+Day25Logic.AnalyzeDay(@"TestFiles\day25TestData.txt");

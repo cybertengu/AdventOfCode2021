@@ -108,7 +108,7 @@ namespace AdventOfCode
             Console.WriteLine(step);
         }
 
-        static void PrintOutPositions(int step, int rowCount, int columnCount, List<Point> eastPositions, List<Point> southPositions)
+        static void DebugPrintOutPositions(int step, int rowCount, int columnCount, List<Point> eastPositions, List<Point> southPositions)
         {
             Console.WriteLine($"After {step} steps:");
             for (int x = 0; x < rowCount; ++x)
